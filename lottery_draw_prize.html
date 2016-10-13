@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title>橙心抽奖</title>
+		<style>
+		    *{
+		    	margin:0;
+		    	padding:0;
+		    	box-sizing:border-box;
+		    }
+		    html,body{
+		    	overflow:hidden;
+		    	width:100%;
+		    	height:100%;
+		    }
+		    .wrapper{
+		    	width:100%;
+		    	height:100%;
+		    	background:url(img/gameBg.jpg) no-repeat center center;
+		    	background-size:cover;
+		    	padding-top: 200px;
+		    }
+			.content{
+				position:relative;
+				width:520px;
+				height:520px;
+				margin:0 auto;
+				text-align:center;
+			}
+			.turntable-bg{
+				position:absolute;
+				top:50%;
+				left:50%;
+				width:500px;
+				height:520px;
+				background:url(img/turntable-bg.png) no-repeat center center;
+		    	background-size:cover;
+				-webkit-transform:translate(-50%,-50%);
+				transform:translate(-50%,-50%);
+			}
+			.turntable-img{
+				position:absolute;
+				top:47%;
+				left:50%;
+				-webkit-transform:translate(-50%,-50%);
+				transform:translate(-50%,-50%);
+			}
+			.turntable-img img{
+				width:420px;
+				height:420px;
+			}
+			.btn-arrow{
+				width:105px;
+				height:223px;
+				position:absolute;
+				left:50%;
+				top:15%;
+				background:url(img/arrow.png) no-repeat center center;
+		    	background-size:cover;
+		    	-webkit-transform:translateX(-50%);
+				transform:translateX(-50%);
+				cursor:pointer;
+			}
+			.prize{
+				position:fixed;
+				left:20px;
+				bottom:10px;
+			}
+			.copy{
+				position:fixed;
+				right:20px;
+				bottom:10px;
+			}
+			.wrapper p{
+				font-family:"微软雅黑";
+				font-size:14px;
+				color:#fff;
+				line-height:1.5;
+				letter-spacing:1px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="content">
+			  <div class="turntable-bg"></div>
+			  <div class="turntable-img">
+			  	<img src="img/tablePrize.png" id="rotate" />
+			  </div>
+			  <img src="img/arrow.png" class="btn-arrow" id="btnArrow"/>
+			</div>
+			 <div class="prize">
+		    	<p>抽奖规则：</p>
+		    	<p>1、抽中一等奖与二等奖的客户需签订合同后，才能使用代金券扣减合同金额，可以和其他优惠叠加使用</p>
+		    	<p>2、二等奖的1000元设计软装代金券需消费3万及以上才可使用</p>
+		    	<p>3、抽中其余奖项的客户可直接在相应门店领取奖品。</p>
+		    </div>
+		    <div class="copy">
+		    	<p>广州市橙家装饰工程有限公司保留最终解释权</p>
+		    </div>
+		</div>
+		<script src="http://libs.baidu.com/jquery/1.6.4/jquery.min.js"></script>
+		<script src="js/awardRotate.js"></script>
+		<script>
+		    var itemName=["二等奖","三等奖","谢谢参与","四等奖","五等奖","六等奖","一等奖","谢谢参与"];
+		    //如果是“谢谢参与”，就表示为none
+		    var prizeName=["1000元设计软装代金券","U盘","none","加湿器","折叠伞",
+		     "木质手机支架","688元装修硬装代金券","none"];
+		     //请求概率的地址
+		    var requestUrl="http://test.o-home.com:8095";
+		    var requestApi="/award/getAwardInfo";
+		    //接收接口的数据
+		    var resultData;
+		     //奖项以及奖品的数据
+		    var prizeData=[
+			    {   "id":1,
+				    	"itemName":"一等奖",
+				    	"prizeName":"688元装修硬装代金券",
+				    	"chance":"5"
+				},
+			    {   "id":2,
+			    	"itemName":"二等奖",
+			    	"prizeName":"1000元设计软装代金券",
+			    	"chance":"20"
+			    },
+			    {   "id":3,
+			    	"itemName":"三等奖",
+			    	"prizeName":"U盘",
+			    	"chance":"5"
+			    },
+			    {   "id":4,
+			    	"itemName":"四等奖",
+			    	"prizeName":"加湿器",
+			    	"chance":"5"
+			    },
+			    {
+			    	"id":5,
+			    	"itemName":"五等奖",
+			    	"prizeName":"折叠伞",
+			    	"chance":"25"	
+			    },
+			    {
+			    	"id":6,
+			    	"itemName":"六等奖",
+			    	"prizeName":"木质手机支架",
+			    	"chance":"35"	
+			    },
+			    {
+			    	"id":7,
+			    	"itemName":"谢谢参与",
+			    	"prizeName":"none",
+			    	"chance":"0"
+			    }
+		    ];
+		    //设置点击的次数
+		    var clickTimes=1;
+			//获取箭头按钮
+			var arrowBtn=document.getElementById("btnArrow");
+			
+            //本地储存
+            if(typeof(window.localStorage.localPrizeData)=="undefined"){
+            	 getTurntableData();
+            }else{
+            	 resultData=JSON.parse(window.localStorage.getItem("localPrizeData"));
+            }
+           
+	        var rotateTimeOut = function (){
+                $('#rotate').rotate({
+                    angle:0,
+                    animateTo:2160,
+                    duration:8000,
+                    callback:function (){
+                        alert('网络超时，请检查您的网络设置！');
+                    }
+                });
+            };
+
+
+            var rotateFn = function (awards, angles, txt, prize){
+                $('#rotate').stopRotate();
+                $('#rotate').rotate({
+                    angle:0,
+                    animateTo:angles+1800,//转动5圈
+                    duration:8000,
+                    callback:function (){
+                    	alert("恭喜您，您抽中"+txt+",获取的奖品是"+prize);
+
+                    }
+                })
+            };
+
+            $('#btnArrow').click(function (){
+            	//判断点击次数，规则只能限定抽奖一次
+                if(clickTimes!=0){
+                	clickTimes--;
+                }else{
+                	alert("亲，您的抽奖次数已用光！");
+                	return false;
+                }
+                //在[1,100]获取随机数
+            	var result=randomNum(1,100);
+            	console.log(resultData);
+            	//数字起点
+            	var baseNum=1;
+            	//随机数对应的奖项
+            	var index=0;
+            	//获取的数字与奖项对应起来
+                for(var i=0,j=resultData.length;i<j;i++){
+                	//获取每个奖项的概率（用百分比）
+                	var chance=resultData[i].drawProb*100;
+                	//判断随机数字是不是在对应奖项的概率范围内(谢谢参与不需要)
+                	if(chance!=0){
+                		if(result>=baseNum&&result<(baseNum+chance)){
+                			index=i+1;
+                			//下面是测试数据
+                			console.log(index+"等奖，随机数是"+result+","+chance+"百分比");
+                			
+                			//根据奖项对应角度
+                		    switch (index) {
+			                    case 1:
+			                        rotateFn(1, 88, resultData[0].awardName,resultData[0].awardDesc);
+			                        break;
+			                    case 2:
+			                        rotateFn(2, 337, resultData[1].awardName,resultData[1].awardDesc);
+			                        break;
+			                    case 3:
+			                        rotateFn(3, 287, resultData[2].awardName,resultData[2].awardDesc);
+			                        break;
+			                    case 4:
+			                        rotateFn(4, 185, resultData[3].awardName,resultData[3].awardDesc);
+			                        break;
+			                    case 5:
+			                        rotateFn(5, 162, resultData[4].awardName,resultData[4].awardDesc);
+			                        break;
+			                    case 6:
+			                        rotateFn(6, 130, resultData[5].awardName,resultData[5].awardDesc);
+			                        break;
+			                }
+                		}
+                	}
+                	//重新设置奖项起点
+                	baseNum=baseNum+chance;
+                }
+                
+            	                
+            });
+                //
+		        function rnd(n, m){
+		            return Math.floor(Math.random()*(m-n+1)+n)
+		        }
+		        
+		        //@return 返回的是两个值之间的随机数
+		        function randomNum(minNum,maxNum){
+		        	var rand=Math.random();
+		        	var ranges=maxNum-minNum;
+		        	return (minNum+Math.round(rand*ranges));
+		        	
+		        }
+		        
+		        //获取接口数据、
+		        function getTurntableData(){
+		        	$.ajax({
+		        		type:"get",
+		        		url:requestUrl+requestApi,
+		        		async:true,
+		        		success:function(data){
+		        			resultData=data;
+		        			console.log(resultData);
+		        			
+		        			//进行本地储存
+		        			if(window.localStorage){
+		        				window.localStorage.setItem("localPrizeData",JSON.stringify(data));
+		        			}
+		        		}
+		        	});
+		        }
+	        	
+
+		</script>
+	</body>
+</html>

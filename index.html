@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我要的幸运大转盘</title>
+		<style>
+			.wrapper{
+				position:relative;
+				width:800px;
+				margin:150px auto;
+				text-align:center;
+			}
+			#canvas{
+				background-color:red;
+				-webkit-transform: rotate(-90deg);/*障眼法设置转盘*/
+				transform: rotate(-90deg);
+			}
+			#canvas2{
+				position:absolute;
+				left:50%;
+				top:50%;
+				-webkit-transform:translate(-50%,-50%);
+				transform:translate(-50%,-50%);
+				cursor:pointer;
+				/*background-color:#fff;*/
+			}
+		</style>
+	</head>
+	<body>
+		<div class="wrapper">
+		  <canvas id="canvas" width="600px" height="600px">
+		  </canvas>
+		  <canvas id="canvas2" width="150px" height="150px">
+		  	
+		  </canvas>
+		</div>
+		<script>
+		    var itemName=["谢谢参与","50块钱红包","100M流量","谢谢参与","688套餐优惠券","谢谢参与","200块钱红包","谢谢参与","500M流量","899套餐优惠券"];
+			var scaleRev=0.95;//旋转的缩减速率
+			var beginAngle=50;//旋转起来时默认开始旋转的度数，度数愈大旋转的初始速度愈大
+			var outCircularRadius=250;//外圆的半径
+			var innerCircularRadius=50;//内圆的半径
+			var secondeInnerCircularRadius=45;//内圆第二层
+			var thirdInnerCircularRadius=40;//内圆第三层
+			var t=null;//定时器
+			var itemAngle=2*Math.PI/itemName.length;
+			var tipText="点击抽奖";
+			var canvas=document.getElementById("canvas");
+			var canvas2=document.getElementById("canvas2");
+			
+			//页面加载完毕执行
+			window.onload=function(){
+				if(canvas.getContext){//检测浏览器是否支持canvas
+					var context=canvas.getContext("2d");//获取canvas绘制图形的工具方法，拿到画笔
+					//移动圆,让它位于canvas的中间
+					context.translate(canvas.width/2,canvas.height/2);
+					//初始化
+					initLuckyTurntable(context);	
+					
+				}
+				if(canvas2.getContext){
+					var context2=canvas2.getContext("2d");
+					//移动圆,让它位于canvas的中间
+					context2.translate(canvas2.width/2,canvas2.height/2);
+					createLuckyArrow(context2);
+					//添加箭头点击事件，进行抽奖
+					canvas2.onclick=function(){
+						console.log(t);
+						if(t){
+							debugger;
+						   return false;
+						}
+						var itemAngle = beginAngle +Math.random()*itemName.length;//
+						var angle = 0;//转动的角度
+						 t = setInterval(function(){
+								itemAngle *=scaleRev;
+								if(itemAngle <=1){
+									//停止转动
+									   clearInterval(t);
+									   t =null;
+									   console.log(angle);
+									   var pos = Math.ceil(angle*itemName.length/360);
+									   console.log(pos);
+									   var res = itemName[itemName.length-pos];
+									  alert(res);
+								}else{
+									   angle+=itemAngle;
+									   if(angle > 360){
+											  angle -=360;
+									   }
+									   context.save();
+									   context.beginPath();
+									   context.rotate(angle * Math.PI/180);//这里的canvas需要换成弧度计算
+									   initLuckyTurntable(context);
+									   context.restore();
+								
+								}
+						 },60);
+									
+					}
+				}
+			};
+			
+			
+			function initLuckyTurntable(context){
+				/*绘制大圆圈以及各项*/
+				for(var i=0,j=itemName.length;i<j;i++){
+					context.save();//保存当前的状态，但还是不太懂这句代码的功能
+					//开始一个新的绘制路径
+					context.beginPath();
+					//起始位移
+					context.moveTo(0,0);
+					//填充颜色的笔
+					if(i%2==0){
+						context.fillStyle="white";
+					}else{
+						context.fillStyle="#FFF4D6";
+					}
+			         //绘制圆,圆心的x,y坐标，半径，起始角度，结束角度，false为顺时针
+			        context.arc(0,0,outCircularRadius,i*itemAngle,(i+1)*itemAngle, false);   
+			        //开始填充颜色
+			        context.fill();
+			        //
+			        context.restore();
+				}
+				
+				context.save();
+				context.beginPath();
+				context.lineWidth = 2; 
+				context.arc(0,0,outCircularRadius,2*Math.PI, false);   
+		        context.stroke();
+		        context.restore();
+				
+				
+				
+				/*填充各项中的文字*/
+				for(var i=0,j=itemName.length;i<j;i++){
+					context.save();
+					context.beginPath();
+					context.fillStyle="red";
+					context.font="22px Arial";
+					context.textalign="center";
+					context.textBaseline="middle";
+					context.rotate(i*itemAngle+itemAngle/2);
+					/*文字，开始绘制文本的位置，结束绘制文本的位置*/
+					context.fillText(itemName[i],outCircularRadius/3,0);
+					context.restore();
+				}
+				
+				
+				/*绘制内圆圈*/
+				context.save();
+				context.beginPath();
+				context.fillStyle="#FDBD05";
+				context.arc(0,0,innerCircularRadius,2*Math.PI,false); 
+				context.fill();
+				context.restore();
+				
+				/*内圆第二层*/
+				context.save();
+				context.beginPath();
+				context.fillStyle="#E52B2A";
+				context.arc(0,0,secondeInnerCircularRadius,2*Math.PI,false);
+				context.fill();
+				context.restore();
+				
+				
+				
+				
+			}
+			
+			function createLuckyArrow(context){
+				
+				/*制造箭头*/
+				context.save();
+			    context.beginPath();
+			    context.lineWidth = 10;
+			    context.fillStyle="#E52B2A";
+			  	context.moveTo(canvas2.width/20-8,-70);
+			  	context.lineTo(canvas2.width/20-23,-30);
+			  	context.lineTo(canvas2.width/20+7,-30);
+			  	context.closePath();
+			  	context.fill();
+			  	context.restore();
+			  	
+			  	/*内圆第三层*/
+				context.save();
+				context.beginPath();
+				context.fillStyle="#CC1519";
+				context.arc(0,0,thirdInnerCircularRadius,2*Math.PI,false);
+				context.fill();
+				context.restore();
+				
+				/*内圆第三层的文字*/
+				context.save();
+				context.beginPath();
+				context.fillStyle="#FDBD05";
+				context.font="18px Arial";
+				context.textalign="center";
+				context.textBaseline="middle";
+				/*文字，开始绘制文本的位置，结束绘制文本的位置*/
+				context.fillText(tipText,-35,0);
+				context.restore();
+			}
+		</script>
+	</body>
+</html>
