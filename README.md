@@ -99,6 +99,6 @@
 
 ![canvas.gif](https://github.com/nobrokenboy/turntable/blob/master/img_turntable.gif)
 
-[戳我进入展示页面](http://nobrokenboy.me/turntablelottery_draw_prize.html)
+[戳我进入展示页面](http://nobrokenboy.me/turntable/lottery_draw_prize.html)
 ### 3.lottery_draw.html
 #### 描述：img+canvas实现抽奖页面，由于我对canvas还不够熟悉，部分复杂UI实现不了，还待继续完善；此外，判断抽奖指针最终的位置还需要再重新整理思路；
