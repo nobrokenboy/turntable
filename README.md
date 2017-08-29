@@ -1,20 +1,20 @@
-##分析当前目录下的三个html实现不同思路，不同UI的抽奖
-###1.index.html
-####描述：简单的抽奖界面，纯canvas以及js实现,适配于网页，借用他人的思路进行模仿实现
-####思路：
-#####1.1canvas绘制UI界面；
-#####1.2根据角度旋转知识，加入缩减速率控制随机；
+## 分析当前目录下的三个html实现不同思路，不同UI的抽奖
+### 1.index.html
+#### 描述：简单的抽奖界面，纯canvas以及js实现,适配于网页，借用他人的思路进行模仿实现
+#### 思路：
+##### 1.1canvas绘制UI界面；
+##### 1.2根据角度旋转知识，加入缩减速率控制随机；
 ![canvas.gif](https://github.com/nobrokenboy/turntable/blob/master/canvas_no_img.gif)
 
 [戳我进入展示页面](http://nobrokenboy.me/turntable/index.html)
-###2.lottery_draw_prize.html
-####描述：图片实现抽奖页面,结合jquery插件awardRotate.js，主要适配于ipad；
-####思路：
-#####2.1设定抽奖次数为1，在点击抽奖时先执行判断抽奖次数是不是等于0；
-#####2.2抽奖中加入概率（通过后台获取），通过在[0,100]取随机数，然后判断随机数处哪个区间，最后再确定要旋转的角度；
-#####2.3加入本地存储，为了防止因网络问题造成无法取到后台抽奖奖品的数据；
-####缺陷：1.可能最终角度的确定还不够准确，原因是对这个终角度的计算细节上还不太懂；
-####核心代码：
+### 2.lottery_draw_prize.html
+#### 描述：图片实现抽奖页面,结合jquery插件awardRotate.js，主要适配于ipad；
+#### 思路：
+##### 2.1设定抽奖次数为1，在点击抽奖时先执行判断抽奖次数是不是等于0；
+##### 2.2抽奖中加入概率（通过后台获取），通过在[0,100]取随机数，然后判断随机数处哪个区间，最后再确定要旋转的角度；
+##### 2.3加入本地存储，为了防止因网络问题造成无法取到后台抽奖奖品的数据；
+#### 缺陷：1.可能最终角度的确定还不够准确，原因是对这个终角度的计算细节上还不太懂；
+#### 核心代码：
 <pre><code>
       $('#btnArrow').click(function (){
             	//判断点击次数，规则只能限定抽奖一次
@@ -100,5 +100,5 @@
 ![canvas.gif](https://github.com/nobrokenboy/turntable/blob/master/img_turntable.gif)
 
 [戳我进入展示页面](http://nobrokenboy.me/turntablelottery_draw_prize.html)
-###3.lottery_draw.html
-####描述：img+canvas实现抽奖页面，由于我对canvas还不够熟悉，部分复杂UI实现不了，还待继续完善；此外，判断抽奖指针最终的位置还需要再重新整理思路；
+### 3.lottery_draw.html
+#### 描述：img+canvas实现抽奖页面，由于我对canvas还不够熟悉，部分复杂UI实现不了，还待继续完善；此外，判断抽奖指针最终的位置还需要再重新整理思路；
